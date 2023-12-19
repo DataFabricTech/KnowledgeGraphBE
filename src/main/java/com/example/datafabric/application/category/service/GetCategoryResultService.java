@@ -1,15 +1,13 @@
 package com.example.datafabric.application.category.service;
 
 import com.example.datafabric.application.category.port.GetCategoryResultUseCase;
+import com.example.datafabric.application.exception.InvalidCategoryIdException;
+import com.example.datafabric.application.exception.InvalidDataObjectIdException;
 import com.example.datafabric.domain.Category;
 import com.example.datafabric.domain.CategoryRepository;
 import com.example.datafabric.domain.CategoryResult;
 import com.example.datafabric.domain.DataObjectRepository;
 import com.example.datafabric.domain.Meta;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -55,7 +53,7 @@ public class GetCategoryResultService implements GetCategoryResultUseCase {
 
         String targetCategoryString = categoryRepository.findByDataObjectIdToString(dataObjectId);
         if (targetCategoryString == null) {
-            throw new RuntimeException("DataObject Id Cannot Found.");
+            throw new InvalidDataObjectIdException();
         }
         Category targetCategory = parseCategory(targetCategoryString);
 
@@ -83,7 +81,7 @@ public class GetCategoryResultService implements GetCategoryResultUseCase {
 
         String targetCategoryString = categoryRepository.findByIdToString(categoryId);
         if (targetCategoryString == null) {
-            throw new RuntimeException("Category Id Cannot Found.");
+            throw new InvalidCategoryIdException();
         }
         Category targetCategory = parseCategory(targetCategoryString);
 
@@ -121,18 +119,5 @@ public class GetCategoryResultService implements GetCategoryResultUseCase {
         }
 
         return category;
-    }
-
-    public void demo() {
-        CategoryResult result = get();
-        File file = new File("/home/jy/datafabric/Demo-Data/Category-result", "Category.json");
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.writeValue(file, result);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
