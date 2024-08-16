@@ -23,3 +23,11 @@ jpa:
       dialect: org.hibernate.dialect.H2Dialect
       format_sql: true
       show_sql: true
+
+kubernetes:
+  namespace:
+  argo-serviceaccount-name: default
+  mount-path: /mnt/df/
+
+image:
+  train-image: alpine:3.7

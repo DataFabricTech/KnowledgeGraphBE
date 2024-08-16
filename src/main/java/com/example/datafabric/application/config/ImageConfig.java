@@ -9,8 +9,8 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConfigurationProperties(prefix = "image")
 public class ImageConfig {
 
-    public final String trainImage;
-    public final String inferenceImage;
+    private final String trainImage;
+    private final String inferenceImage;
 
     public ImageConfig(String trainImage, String inferenceImage) {
         this.trainImage = trainImage;
