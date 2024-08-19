@@ -5,13 +5,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @EqualsAndHashCode(of = {"id"})
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OutboxEvent {
 
     @Id
