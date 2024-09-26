@@ -1,0 +1,56 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+  <changeSet id="changelog-1.0" author="takhun_kim">
+    <createTable tableName="datafabric_train">
+      <column name="train_id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="input_data_path" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="solution_type" type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="model_hyperparameters" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="feature_hyperparameters" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="learning_hyperparameters" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_at" type="DATETIME" defaultValue="now()">
+        <constraints nullable="false"/>
+      </column>
+      <column name="finished_at" type="DATETIME">
+        <constraints nullable="true"/>
+      </column>
+    </createTable>
+    <createTable tableName="outbox_event">
+      <column name="outbox_event_id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="aggregate_type" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="event_type" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="payload" type="text">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+</databaseChangeLog>

@@ -33,6 +33,9 @@ dependencies {
     implementation 'io.fabric8:kubernetes-client:6.0.0'
     implementation 'io.fabric8:openshift-client:6.0.0'
     implementation 'io.kubernetes:client-java:16.0.0'
+
+    implementation 'mysql:mysql-connector-java:8.0.29'
+    implementation 'org.liquibase:liquibase-core:4.24.0'
 }
 
 tasks.named('test') {
