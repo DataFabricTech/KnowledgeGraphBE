@@ -1,4 +1,4 @@
-package com.tmax.datafabric.application.workflow.port.dto;
+package com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition;
 
 import io.fabric8.kubernetes.api.model.KubernetesResource;
 import io.fabric8.openshift.api.model.Parameter;

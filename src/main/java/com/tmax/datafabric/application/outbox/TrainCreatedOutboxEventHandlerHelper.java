@@ -2,12 +2,12 @@ package com.tmax.datafabric.application.outbox;
 
 import com.tmax.datafabric.application.config.DatafabricConst;
 import com.tmax.datafabric.application.config.ImageConfig;
-import com.tmax.datafabric.application.config.KubernetesConfig;
-import com.tmax.datafabric.application.workflow.port.dto.DagTask;
-import com.tmax.datafabric.application.workflow.port.dto.DagTemplate;
-import com.tmax.datafabric.application.workflow.port.dto.Template;
-import com.tmax.datafabric.application.workflow.port.dto.Workflow;
-import com.tmax.datafabric.application.workflow.port.dto.WorkflowSpec;
+import com.tmax.datafabric.kubernetesclient.config.KubernetesConfig;
+import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.DagTask;
+import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.DagTemplate;
+import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.Template;
+import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.Workflow;
+import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.WorkflowSpec;
 import com.tmax.datafabric.domain.event.Event;
 import com.tmax.datafabric.domain.event.TrainCreatedEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
@@ -107,7 +107,7 @@ public class TrainCreatedOutboxEventHandlerHelper implements OutboxEventHandlerH
 
         List<DagTask> tasks = new ArrayList<>();
         Template template = Template.createTemplate(DatafabricConst.TRAIN,containerBuilder.withName(DatafabricConst.TRAIN).withArgs(args).withEnv(envs).withCommand(command)
-            .withVolumeMounts(volumeMounts).withImage(imageConfig.getTrainImage()).withResources(resourceRequirements)
+            .withVolumeMounts(volumeMounts).withImage(imageConfig.getTrainImageName()).withResources(resourceRequirements)
             .build());
         templates.add(template);
 

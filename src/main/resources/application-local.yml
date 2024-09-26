@@ -1,3 +1,27 @@
 server:
-  port: 18080
+  port: 18852
   shutdown: graceful
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3305/datafabric
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 60
+  liquibase:
+    change-log: db/changelog/db-changelog-master.xml
+    enabled: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        show_sql: true
+        hbm2ddl:
+          auto: none
+
+kubernetes:
+  config:
+    type: minikube
