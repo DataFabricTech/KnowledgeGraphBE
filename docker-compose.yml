@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  datafabric-server-db:
+    container_name: datafabric-server-db
+    build:
+      context: ./docker/db
+      dockerfile: Dockerfile
+    ports:
+      - target: 3306
+        published: 3305
+    env_file:
+      - ./docker/db/.env
+    volumes:
+      - ./docker/db/my.cnf:/etc/conf.d/my.cnf
+    networks:
+      - datafabric-server-bridge
+    healthcheck:
+      test: mysqladmin ping -u root -p; echo root
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+networks:
+  datafabric-server-bridge:
+    name: datafabric-server-bridge
