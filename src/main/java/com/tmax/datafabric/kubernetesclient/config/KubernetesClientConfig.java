@@ -1,4 +1,4 @@
-package com.tmax.datafabric.application.config;
+package com.tmax.datafabric.kubernetesclient.config;
 
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;

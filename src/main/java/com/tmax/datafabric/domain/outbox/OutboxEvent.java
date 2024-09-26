@@ -1,5 +1,6 @@
 package com.tmax.datafabric.domain.outbox;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,6 +20,7 @@ public class OutboxEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "outbox_event_id")
     private Long id;
 
     private String aggregateType;

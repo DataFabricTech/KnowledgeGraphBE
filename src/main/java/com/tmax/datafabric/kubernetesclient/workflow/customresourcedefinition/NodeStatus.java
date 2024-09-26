@@ -1,4 +1,4 @@
-package com.tmax.datafabric.application.workflow.port.dto;
+package com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
