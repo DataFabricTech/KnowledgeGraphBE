@@ -13,7 +13,7 @@ import com.tmax.datafabric.domain.event.TrainCreatedEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEventConstant.AggregateType;
 import com.tmax.datafabric.domain.outbox.OutboxEventHandlerHelper;
-import com.tmax.datafabric.domain.train.TrainRepository;
+import com.tmax.datafabric.domain.train.AnalysisRepository;
 import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TrainCreatedOutboxEventHandlerHelper implements OutboxEventHandlerHelper {
 
-    private final TrainRepository trainRepository;
+    private final AnalysisRepository analysisRepository;
     private final ImageConfig imageConfig;
     private final KubernetesClient kubernetesClient;
     private final KubernetesConfig kubernetesConfig;
@@ -51,7 +51,7 @@ public class TrainCreatedOutboxEventHandlerHelper implements OutboxEventHandlerH
     public void handle(Event domainEvent) {
 
         TrainCreatedEvent trainCreatedEvent = (TrainCreatedEvent) domainEvent;
-        if (!trainRepository.findById(trainCreatedEvent.getTrainId()).isPresent()) {
+        if (!analysisRepository.findById(trainCreatedEvent.getTrainId()).isPresent()) {
             return;
         }
 

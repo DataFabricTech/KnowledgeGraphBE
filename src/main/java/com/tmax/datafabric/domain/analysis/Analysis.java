@@ -19,11 +19,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "datafabric_train")
-public class Train {
+public class Analysis {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long trainId;
+    private Long analysisId;
 
     private String name;
     private String inputDataPath;
@@ -39,7 +39,7 @@ public class Train {
 
     private String status;
 
-    protected Train(String name, String inputDataPath, String solutionType, String modelType,
+    protected Analysis(String name, String inputDataPath, String solutionType, String modelType,
         HyperParameter hyperparameter) {
         this.name = name;
         this.inputDataPath = inputDataPath;
@@ -49,9 +49,9 @@ public class Train {
         this.status = "READY";
     }
 
-    public static Train createTrain(String name, String inputDataPath,String solutionType,
+    public static Analysis createTrain(String name, String inputDataPath,String solutionType,
         String modelType, HyperParameter hyperparameter) {
-        return new Train(name, solutionType, inputDataPath, modelType, hyperparameter);
+        return new Analysis(name, solutionType, inputDataPath, modelType, hyperparameter);
     }
 
     public void running() {
