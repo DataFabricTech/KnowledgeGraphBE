@@ -5,7 +5,10 @@ import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.ExecWatch;
+import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,5 +36,11 @@ public class KubernetesPodClientAdapter implements KubernetesPodClient {
     @Override
     public Pod getPod(String namespace, String podName) {
         return kubernetesClient.resources(Pod.class).inNamespace(namespace).withName(podName).get();
+    }
+
+    @Override
+    public InputStream downloadFileFromPod(String srcPath, String namespace, String podName) {
+        return kubernetesClient.pods().inNamespace(namespace).withName(podName).inContainer(podName)
+            .file(srcPath).read();
     }
 }

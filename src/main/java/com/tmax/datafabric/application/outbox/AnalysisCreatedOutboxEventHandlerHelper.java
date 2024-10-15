@@ -9,11 +9,12 @@ import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.Te
 import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.Workflow;
 import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.WorkflowSpec;
 import com.tmax.datafabric.domain.event.Event;
-import com.tmax.datafabric.domain.event.TrainCreatedEvent;
+import com.tmax.datafabric.domain.event.AnalysisCreatedEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEventConstant.AggregateType;
 import com.tmax.datafabric.domain.outbox.OutboxEventHandlerHelper;
-import com.tmax.datafabric.domain.train.AnalysisRepository;
+import com.tmax.datafabric.domain.analysis.AnalysisRepository;
+import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
@@ -23,18 +24,20 @@ import io.fabric8.kubernetes.api.model.ResourceRequirements;
 import io.fabric8.kubernetes.api.model.Volume;
 import io.fabric8.kubernetes.api.model.VolumeMount;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TrainCreatedOutboxEventHandlerHelper implements OutboxEventHandlerHelper {
+public class AnalysisCreatedOutboxEventHandlerHelper implements OutboxEventHandlerHelper {
 
     private final AnalysisRepository analysisRepository;
     private final ImageConfig imageConfig;
@@ -43,75 +46,114 @@ public class TrainCreatedOutboxEventHandlerHelper implements OutboxEventHandlerH
 
     @Override
     public boolean support(OutboxEvent outboxEvent) {
-        return outboxEvent.getAggregateType().equals(AggregateType.DATAFABRIC_TRAIN)
-            && outboxEvent.getEventType().equals(TrainCreatedEvent.class.getName());
+        return outboxEvent.getAggregateType().equals(AggregateType.DATAFABRIC_ANALYSIS)
+            && outboxEvent.getEventType().equals(AnalysisCreatedEvent.class.getName());
     }
 
     @Override
     public void handle(Event domainEvent) {
 
-        TrainCreatedEvent trainCreatedEvent = (TrainCreatedEvent) domainEvent;
-        if (!analysisRepository.findById(trainCreatedEvent.getTrainId()).isPresent()) {
+        AnalysisCreatedEvent analysisCreatedEvent = (AnalysisCreatedEvent) domainEvent;
+        if (!analysisRepository.findById(analysisCreatedEvent.getAnalysisId()).isPresent()) {
             return;
         }
 
-        createWorkflowFromTrain(trainCreatedEvent);
+        createWorkflowFromAnalysisCreatedEvent(analysisCreatedEvent);
 
     }
 
-    private void createWorkflowFromTrain(TrainCreatedEvent trainCreatedEvent){
-        List<String> command = Arrays.asList("sh", "-c");
+    private void createWorkflowFromAnalysisCreatedEvent(AnalysisCreatedEvent analysisCreatedEvent){
+        List<String> command = Arrays.asList("python3", "agent/main.py");
 
         ObjectMetaBuilder objectMetaBuilder = new ObjectMetaBuilder();
         ContainerBuilder containerBuilder = new ContainerBuilder();
 
-        Map<String, String> labels = Map.of(DatafabricConst.DATAFABRIC, DatafabricConst.TRAIN,
-            DatafabricConst.TRAIN_ID, trainCreatedEvent.getTrainId().toString());
+        Map<String, String> labels = Map.of(DatafabricConst.DATAFABRIC, DatafabricConst.ANALYSIS,
+            DatafabricConst.ANALYSIS_ID, analysisCreatedEvent.getAnalysisId().toString());
 
         List<Template> templates = new ArrayList<Template>();
 
         ResourceRequirements resourceRequirements = new ResourceRequirements();
         Map<String, Quantity> resource = new HashMap<>();
-        resource.put("cpu", new Quantity("1"));
-        resource.put("memory", new Quantity("1"));
+
+        if (!(analysisCreatedEvent.getCpuSize().isEmpty())
+            && !(analysisCreatedEvent.getMemorySize().isEmpty())) {
+            resource.put("cpu", new Quantity(analysisCreatedEvent.getCpuSize()));
+            resource.put("memory", new Quantity(analysisCreatedEvent.getMemorySize()));
+        } else {
+            resource.put("cpu", new Quantity("1"));
+            resource.put("memory", new Quantity("1Gi"));
+        }
+
         resourceRequirements.setLimits(resource);
         resourceRequirements.setRequests(resource);
 
 
         List<String> args = new ArrayList<>();
+
+        args.add("--analysis_id");
+        args.add(analysisCreatedEvent.getAnalysisId().toString());
+
+        args.add("--mode");
+        System.out.println(analysisCreatedEvent.getInputDataPath().isEmpty());
+        if (analysisCreatedEvent.getInputDataPath().isEmpty()) {
+            args.add("mock");
+        } else {
+            args.add("production");
+
+            args.add("--input_data_path");
+            args.add(analysisCreatedEvent.getInputDataPath());
+        }
+
+        String analysisOutputCsvFilePath = DatafabricConst.DATAFABRIC_MOUNT_PATH + File.separator
+            + String.format("analysis-%d", analysisCreatedEvent.getAnalysisId()) + File.separator
+            + "association_rule_result.csv";
+
+        args.add("--output_data_path");
+        args.add(analysisOutputCsvFilePath);
+
+        args.add("--algorithm");
+        args.add(analysisCreatedEvent.getSolutionType().toLowerCase());
+
         args.add("--model_option");
-        args.add(trainCreatedEvent.getModelHyperparameters());
+        args.add(analysisCreatedEvent.getModelHyperparameters());
         args.add("--fe_option");
-        args.add(trainCreatedEvent.getFeatureHyperparameters());
+        args.add(analysisCreatedEvent.getFeatureHyperparameters());
         args.add("--learning_option");
-        args.add(trainCreatedEvent.getLearningHyperparameters());
+        args.add(analysisCreatedEvent.getLearningHyperparameters());
 
 
         List<EnvVar> envs = new ArrayList<>();
-        envs.add(new EnvVar("job_type", DatafabricConst.TRAIN, null));
-        envs.add(new EnvVar("train_id", trainCreatedEvent.getTrainId().toString(), null));
+        envs.add(new EnvVar("job_type", DatafabricConst.ANALYSIS, null));
+        envs.add(new EnvVar("analysis_id", analysisCreatedEvent.getAnalysisId().toString(), null));
 
 
         List<Volume> volumes = new ArrayList<>();
         Volume volume = new Volume();
         PersistentVolumeClaimVolumeSource pvc = new PersistentVolumeClaimVolumeSource();
-        pvc.setClaimName("datafabric");
-        volume.setName("datafabric");
+        pvc.setClaimName(kubernetesConfig.getPvcName());
+        volume.setName(kubernetesConfig.getPvcName());
         volume.setPersistentVolumeClaim(pvc);
         volumes.add(volume);
 
         VolumeMount volumeMounts = new VolumeMount();
-        volumeMounts.setName("datafabric");
+        volumeMounts.setName(kubernetesConfig.getPvcName());
         volumeMounts.setMountPath(kubernetesConfig.getMountPath());
 
+        String solutionType = Optional.ofNullable(analysisCreatedEvent.getSolutionType())
+            .orElse("default").toLowerCase();
+
+        Container container = containerBuilder.withName(solutionType)
+            .withArgs(args).withEnv(envs).withCommand(command)
+            .withVolumeMounts(volumeMounts).withImage(imageConfig.getAnalysisImageName())
+            .withResources(resourceRequirements)
+            .build();
 
         List<DagTask> tasks = new ArrayList<>();
-        Template template = Template.createTemplate(DatafabricConst.TRAIN,containerBuilder.withName(DatafabricConst.TRAIN).withArgs(args).withEnv(envs).withCommand(command)
-            .withVolumeMounts(volumeMounts).withImage(imageConfig.getTrainImageName()).withResources(resourceRequirements)
-            .build());
+        Template template = Template.createTemplate(DatafabricConst.ANALYSIS, container);
         templates.add(template);
 
-        DagTask dagTask = DagTask.createDagTask(DatafabricConst.TRAIN, DatafabricConst.TRAIN);
+        DagTask dagTask = DagTask.createDagTask(DatafabricConst.ANALYSIS, DatafabricConst.ANALYSIS);
         tasks.add(dagTask);
 
         String dagName = "dag";
@@ -124,7 +166,8 @@ public class TrainCreatedOutboxEventHandlerHelper implements OutboxEventHandlerH
 
         Workflow workflow = Workflow.createWorkflow(
             objectMetaBuilder.withNamespace(kubernetesConfig.getNamespace())
-                .withName("train-"+trainCreatedEvent.getTrainId()+ RandomStringUtils.randomAlphabetic(3).toLowerCase())
+                .withName("analysis-"+ analysisCreatedEvent.getAnalysisId() + "-"
+                    + RandomStringUtils.randomAlphabetic(4).toLowerCase())
                 .withLabels(labels).build(), workflowSpec);
 
         kubernetesClient.resource(workflow).create();

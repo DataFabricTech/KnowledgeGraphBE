@@ -1,8 +1,8 @@
-package com.tmax.datafabric.infrastructure.train;
+package com.tmax.datafabric.infrastructure.analysis;
 
-import com.tmax.datafabric.domain.train.Analysis;
+import com.tmax.datafabric.domain.analysis.Analysis;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface JpaTrainRepository extends JpaRepository<Analysis, Long> {
+public interface JpaAnalysisRepository extends JpaRepository<Analysis, Long> {
 
 }

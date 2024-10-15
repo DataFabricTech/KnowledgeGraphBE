@@ -1,5 +1,6 @@
 package com.tmax.datafabric.kubernetesclient.pod;
 
-public interface KubernetesPodClient extends CreatePod, GetPod, ExecPod, DeletePod {
+public interface KubernetesPodClient extends CreatePod, GetPod, ExecPod, DeletePod,
+    FileTransferWithPod {
 
 }

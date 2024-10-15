@@ -1,6 +1,7 @@
-package com.tmax.datafabric.domain.train;
+package com.tmax.datafabric.domain.analysis;
 
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -18,47 +19,57 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "datafabric_train")
+@Table(name = "datafabric_analysis")
 public class Analysis {
 
     @Id
+    @Column(name = "analysis_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long analysisId;
+    private Long id;
 
     private String name;
     private String inputDataPath;
     private String solutionType;
-    private String modelType;
 
     @Embedded
     private HyperParameter hyperparameter;
+
+    private String creator;
 
     @CreatedDate
     private LocalDateTime createdAt;
     private LocalDateTime finishedAt;
 
-    private String status;
+    private AnalysisStatus status;
 
-    protected Analysis(String name, String inputDataPath, String solutionType, String modelType,
-        HyperParameter hyperparameter) {
+    @Embedded
+    private ResourceSpec resourceSpec;
+
+    protected Analysis(String name, String inputDataPath, String solutionType,
+        HyperParameter hyperparameter, ResourceSpec resourceSpec, String creator) {
         this.name = name;
         this.inputDataPath = inputDataPath;
         this.solutionType = solutionType;
-        this.modelType = modelType;
         this.hyperparameter = hyperparameter;
-        this.status = "READY";
+        this.resourceSpec = resourceSpec;
+        this.creator = creator;
+        this.status = AnalysisStatus.READY;
     }
 
-    public static Analysis createTrain(String name, String inputDataPath,String solutionType,
-        String modelType, HyperParameter hyperparameter) {
-        return new Analysis(name, solutionType, inputDataPath, modelType, hyperparameter);
+    public static Analysis createAnalysis(String name, String inputDataPath,String solutionType,
+        HyperParameter hyperparameter, ResourceSpec resourceSpec, String creator) {
+        return new Analysis(name, inputDataPath, solutionType, hyperparameter, resourceSpec, creator);
     }
 
     public void running() {
-        this.status = "RUNNING";
+        this.status = AnalysisStatus.RUNNING;
     }
 
     public void fail() {
-        this.status = "FAILED";
+        this.status = AnalysisStatus.FAIL;
+    }
+
+    public void finished() {
+        this.status = AnalysisStatus.COMPLETE;
     }
 }

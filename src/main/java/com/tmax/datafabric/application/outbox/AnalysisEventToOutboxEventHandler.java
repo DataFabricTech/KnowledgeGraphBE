@@ -1,6 +1,6 @@
 package com.tmax.datafabric.application.outbox;
 
-import com.tmax.datafabric.domain.event.TrainCreatedEvent;
+import com.tmax.datafabric.domain.event.AnalysisCreatedEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEventConstant.AggregateType;
 import com.tmax.datafabric.domain.outbox.OuxboxEventRepository;
@@ -10,16 +10,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class TrainEventToOutboxEventHandler {
+public class AnalysisEventToOutboxEventHandler {
 
     private final OuxboxEventRepository ouxboxEventRepository;
 
     @EventListener
-    public void handle(TrainCreatedEvent trainCreatedEvent) {
+    public void handle(AnalysisCreatedEvent analysisCreatedEvent) {
         OutboxEvent outboxEvent = OutboxEvent.builder()
-            .aggregateType(AggregateType.DATAFABRIC_TRAIN)
-            .eventType(TrainCreatedEvent.class.getName())
-            .payload(trainCreatedEvent.getPayload())
+            .aggregateType(AggregateType.DATAFABRIC_ANALYSIS)
+            .eventType(AnalysisCreatedEvent.class.getName())
+            .payload(analysisCreatedEvent.getPayload())
             .build();
 
         ouxboxEventRepository.save(outboxEvent);
