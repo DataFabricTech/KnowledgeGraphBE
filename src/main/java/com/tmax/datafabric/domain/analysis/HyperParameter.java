@@ -1,4 +1,4 @@
-package com.tmax.datafabric.domain.train;
+package com.tmax.datafabric.domain.analysis;
 
 import javax.persistence.Embeddable;
 import lombok.AccessLevel;

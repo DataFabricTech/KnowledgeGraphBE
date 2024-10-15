@@ -8,13 +8,11 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConstructorBinding
 @ConfigurationProperties(prefix = "image")
 public class ImageConfig {
-    private final String trainImageName;
-    private final String inferenceImageName;
+    private final String analysisImageName;
     private final String downloaderImageName;
 
-    public ImageConfig(String trainImageName, String inferenceImageName, String downloaderImageName) {
-        this.trainImageName = trainImageName;
-        this.inferenceImageName = inferenceImageName;
+    public ImageConfig(String analysisImageName, String downloaderImageName) {
+        this.analysisImageName = analysisImageName;
         this.downloaderImageName = downloaderImageName;
     }
 }

@@ -1,4 +1,4 @@
-package com.tmax.datafabric.interfaces.category;
+package com.tmax.datafabric.presentation.category;
 
 import com.tmax.datafabric.application.category.port.GetCategoryResultUseCase;
 import com.tmax.datafabric.domain.CategoryResult;

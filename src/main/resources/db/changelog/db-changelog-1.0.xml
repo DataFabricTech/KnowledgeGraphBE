@@ -6,8 +6,8 @@
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
   <changeSet id="changelog-1.0" author="takhun_kim">
-    <createTable tableName="datafabric_train">
-      <column name="train_id" type="bigint" autoIncrement="true">
+    <createTable tableName="datafabric_analysis">
+      <column name="analysis_id" type="bigint" autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
       <column name="name" type="varchar(255)">
@@ -28,7 +28,16 @@
       <column name="learning_hyperparameters" type="text">
         <constraints nullable="false"/>
       </column>
+      <column name="creator" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
       <column name="status" type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="cpu_size" type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="memory_size" type="varchar(20)">
         <constraints nullable="false"/>
       </column>
       <column name="created_at" type="DATETIME" defaultValue="now()">

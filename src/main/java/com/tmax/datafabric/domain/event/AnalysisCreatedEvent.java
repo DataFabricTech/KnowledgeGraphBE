@@ -6,32 +6,38 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TrainCreatedEvent extends Event {
+public class AnalysisCreatedEvent extends Event {
 
-    private Long trainId;
+    private Long analysisId;
     private String inputDataPath;
     private String solutionType;
-    private String modelType;
+    private String imageName;
     private String modelHyperparameters;
     private String featureHyperparameters;
     private String learningHyperparameters;
+    private String cpuSize;
+    private String memorySize;
 
-    protected TrainCreatedEvent(Long trainId, String inputDataPath, String solutionType,
-        String modelType, String modelHyperparameters, String featureHyperparameters,
-        String learningHyperparameters) {
-        this.trainId = trainId;
+    protected AnalysisCreatedEvent(Long analysisId, String inputDataPath, String solutionType,
+        String imageName, String modelHyperparameters, String featureHyperparameters,
+        String learningHyperparameters, String cpuSize, String memorySize) {
+        this.analysisId = analysisId;
         this.inputDataPath = inputDataPath;
         this.solutionType = solutionType;
-        this.modelType = modelType != null ? modelType : "exampleModel";
+        this.imageName = imageName;
         this.modelHyperparameters = modelHyperparameters;
         this.featureHyperparameters = featureHyperparameters;
         this.learningHyperparameters = learningHyperparameters;
+        this.cpuSize = cpuSize;
+        this.memorySize = memorySize;
     }
 
-    public static TrainCreatedEvent create(Long trainId, String inputDataPath, String solutionType,
-        String modelType, String modelHyperparameters, String featureHyperparameters,
-        String learningHyperparameters) {
-        return new TrainCreatedEvent(trainId, inputDataPath, solutionType, modelType,
-            modelHyperparameters, featureHyperparameters, learningHyperparameters);
+    public static AnalysisCreatedEvent create(Long analysisId, String inputDataPath,
+        String solutionType,  String imageName, String modelHyperparameters,
+        String featureHyperparameters, String learningHyperparameters, String cpuSize,
+        String memorySize) {
+        return new AnalysisCreatedEvent(analysisId, inputDataPath, solutionType, imageName,
+            modelHyperparameters, featureHyperparameters, learningHyperparameters, cpuSize,
+            memorySize);
     }
 }

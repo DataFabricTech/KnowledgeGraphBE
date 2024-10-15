@@ -18,9 +18,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-        show_sql: true
         hbm2ddl:
           auto: none
+        show_sql: false
 
 kubernetes:
   config:

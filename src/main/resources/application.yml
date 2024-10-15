@@ -8,9 +8,9 @@ kubernetes:
     argo-serviceaccount-name: default
     pvcName: datafabric-pvc
     podName: datafabric-pod
-    mount-path: /mnt/df/
+    mount-path: /pvc/mnt
 
 image:
-  train-image-name: alpine:3.7
-  inference-image-name: alpine:3.7
+  analysis-image-name: 192.168.122.128:31234/datafabric/agent:20241011_v10
   downloader-image-name: 192.168.122.128:31234/ax_demo/downloader:0.1
+#  downloader-image-name: balab.harbor.com/datafabric/downloader:0.1

@@ -1,5 +1,5 @@
 package com.tmax.datafabric.domain.event;
 
-public class TrainCompletedEvent {
+public class AnalysisCompletedEvent {
 
 }

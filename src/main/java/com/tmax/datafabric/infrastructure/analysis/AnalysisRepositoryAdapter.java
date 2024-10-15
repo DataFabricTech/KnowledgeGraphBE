@@ -1,7 +1,7 @@
-package com.tmax.datafabric.infrastructure.train;
+package com.tmax.datafabric.infrastructure.analysis;
 
-import com.tmax.datafabric.domain.train.Analysis;
-import com.tmax.datafabric.domain.train.AnalysisRepository;
+import com.tmax.datafabric.domain.analysis.Analysis;
+import com.tmax.datafabric.domain.analysis.AnalysisRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,15 +10,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AnalysisRepositoryAdapter implements AnalysisRepository {
 
-    private final JpaTrainRepository jpaTrainRepository;
+    private final JpaAnalysisRepository jpaAnalysisRepository;
 
     @Override
     public Analysis save(Analysis analysis) {
-        return jpaTrainRepository.save(analysis);
+        return jpaAnalysisRepository.save(analysis);
     }
 
     @Override
     public Optional<Analysis> findById(Long id) {
-        return jpaTrainRepository.findById(id);
+        return jpaAnalysisRepository.findById(id);
     }
 }

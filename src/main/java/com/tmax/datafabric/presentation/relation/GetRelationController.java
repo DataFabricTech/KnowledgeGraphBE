@@ -1,4 +1,4 @@
-package com.tmax.datafabric.interfaces.relation;
+package com.tmax.datafabric.presentation.relation;
 
 import com.tmax.datafabric.application.relation.port.GetRelationResultUseCase;
 import com.tmax.datafabric.domain.RelationResult;
