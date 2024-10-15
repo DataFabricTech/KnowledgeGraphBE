@@ -19,7 +19,7 @@ public class CreateTrainService implements CreateTrainUseCase {
     private final EventPublisher eventPublisher;
 
     @Override
-    public void create(CreateTrainCommand command) {
+    public AnalysisData create(CreateTrainCommand command) {
         //1. DB에 저장
         HyperParameter hyperParameter = HyperParameterDto.to(command.getHyperparameterDto());
         Train train = Train.createTrain(command.getName(), command.getInputDataPath(),
@@ -32,5 +32,9 @@ public class CreateTrainService implements CreateTrainUseCase {
             savedTrain.getInputDataPath(), savedTrain.getSolutionType(), savedTrain.getModelType(),
             hyperParameter.getModelHyperparameters(), hyperParameter.getFeatureHyperparameters(),
             hyperParameter.getLearningHyperparameters()));
+
+        return ;
     }
+
+
 }
