@@ -1,0 +1,30 @@
+package com.tmax.datafabric.presentation.analysis;
+
+import com.tmax.datafabric.application.analysis.port.GetAnalysisResultUseCase;
+import com.tmax.datafabric.application.analysis.port.GetAnalysisUseCase;
+import com.tmax.datafabric.application.analysis.port.dto.AnalysisData;
+import com.tmax.datafabric.application.analysis.port.dto.DataRelationData;
+import lombok.RequiredArgsConstructor;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@RestAnalysisController
+@RequiredArgsConstructor
+public class GetAnalysisController {
+    private final GetAnalysisUseCase getAnalysisUseCase;
+    private final GetAnalysisResultUseCase getAssocationAnalysisResultUseCase;
+
+    @GetMapping("/{analysisId}")
+    public AnalysisData getAnalysis(@PathVariable Long analysisId) {
+        return getAnalysisUseCase.getAnalysis(analysisId);
+    }
+
+    @GetMapping("/{analysisId}/relation")
+    public DataRelationData getRelationViaAssociationAnalysis(@PathVariable Long analysisId,
+        @RequestParam(name = "data-id") Long dataId) {
+        String modelType = "association";
+        return getAssocationAnalysisResultUseCase.getRelation(analysisId, dataId, modelType);
+    }
+}
