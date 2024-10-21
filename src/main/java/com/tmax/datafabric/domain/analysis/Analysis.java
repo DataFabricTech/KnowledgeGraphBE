@@ -62,14 +62,28 @@ public class Analysis {
     }
 
     public void running() {
+        if (this.status.equals(AnalysisStatus.READY)) {
+            return;
+        }
+
         this.status = AnalysisStatus.RUNNING;
     }
 
     public void fail() {
+        if (this.status.equals(AnalysisStatus.COMPLETE)) {
+            return;
+        }
+
         this.status = AnalysisStatus.FAIL;
+        this.finishedAt = LocalDateTime.now();
     }
 
-    public void finished() {
+    public void complete() {
+        if (this.status.equals(AnalysisStatus.FAIL)) {
+            return;
+        }
+
         this.status = AnalysisStatus.COMPLETE;
+        this.finishedAt = LocalDateTime.now();
     }
 }
