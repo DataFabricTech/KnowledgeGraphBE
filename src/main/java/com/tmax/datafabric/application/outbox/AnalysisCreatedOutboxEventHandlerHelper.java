@@ -88,14 +88,13 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements OutboxEventHandl
         resourceRequirements.setLimits(resource);
         resourceRequirements.setRequests(resource);
 
-
         List<String> args = new ArrayList<>();
 
         args.add("--analysis_id");
         args.add(analysisCreatedEvent.getAnalysisId().toString());
 
         args.add("--mode");
-        System.out.println(analysisCreatedEvent.getInputDataPath().isEmpty());
+
         if (analysisCreatedEvent.getInputDataPath().isEmpty()) {
             args.add("mock");
         } else {
