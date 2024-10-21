@@ -2,7 +2,7 @@ package com.tmax.datafabric.domain.outbox;
 
 import java.util.List;
 
-public interface OuxboxEventRepository {
+public interface OutboxEventRepository {
 
     OutboxEvent save(OutboxEvent outboxEvent);
 

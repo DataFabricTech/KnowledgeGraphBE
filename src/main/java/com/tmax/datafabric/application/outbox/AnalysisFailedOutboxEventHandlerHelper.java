@@ -2,6 +2,7 @@ package com.tmax.datafabric.application.outbox;
 
 import com.tmax.datafabric.application.config.KubernetesLabelConst;
 import com.tmax.datafabric.domain.event.AnalysisCompletedEvent;
+import com.tmax.datafabric.domain.event.AnalysisFailedEvent;
 import com.tmax.datafabric.domain.event.Event;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEventConstant.AggregateType;
@@ -12,16 +13,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
-public class AnalysisCompletedOutboxEventHandlerHelper implements OutboxEventHandlerHelper{
+@RequiredArgsConstructor
+public class AnalysisFailedOutboxEventHandlerHelper implements OutboxEventHandlerHelper {
     private final KubernetesWorkflowClient workflowClient;
     private final KubernetesConfig kubernetesConfig;
 
     @Override
     public boolean support(OutboxEvent outboxEvent) {
-        return (outboxEvent.getAggregateType().equals(AggregateType.DATAFABRIC_ANALYSIS) &&
-            outboxEvent.getEventType().equals(AnalysisCompletedEvent.class.getName()));
+        return outboxEvent.getAggregateType().equals(AggregateType.DATAFABRIC_ANALYSIS) &&
+            outboxEvent.getEventType().equals(AnalysisFailedEvent.class.getName());
     }
 
     @Override
@@ -32,7 +33,7 @@ public class AnalysisCompletedOutboxEventHandlerHelper implements OutboxEventHan
 
         deleteAnalysisWorkflow(analysisId);
 
-        log.info("[WORKFLOW NOTIFICATION] Analysis (analysisId = {}) Completed.", analysisId);
+        log.info("[WORKFLOW NOTIFICATION] Analysis (analysisId = {}) Failed.", analysisId);
     }
 
     private void deleteAnalysisWorkflow(Long analysisId) {

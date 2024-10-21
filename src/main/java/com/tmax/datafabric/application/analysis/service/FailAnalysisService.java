@@ -4,6 +4,8 @@ import com.tmax.datafabric.application.analysis.port.FailAnalysisUseCase;
 import com.tmax.datafabric.application.exception.InvalidAnalysisIdException;
 import com.tmax.datafabric.domain.analysis.Analysis;
 import com.tmax.datafabric.domain.analysis.AnalysisRepository;
+import com.tmax.datafabric.domain.event.AnalysisFailedEvent;
+import com.tmax.datafabric.domain.event.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class FailAnalysisService implements FailAnalysisUseCase {
     private final AnalysisRepository analysisRepository;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     @Override
@@ -22,5 +25,6 @@ public class FailAnalysisService implements FailAnalysisUseCase {
             InvalidAnalysisIdException::new);
 
         analysis.fail();
+        eventPublisher.publish(AnalysisFailedEvent.from(analysis));
     }
 }
