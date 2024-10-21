@@ -2,7 +2,7 @@ package com.tmax.datafabric.application.outbox;
 
 import com.tmax.datafabric.domain.event.EventPublisher;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
-import com.tmax.datafabric.domain.outbox.OuxboxEventRepository;
+import com.tmax.datafabric.domain.outbox.OutboxEventRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @RequiredArgsConstructor
 public class OutboxScheduler {
 
-    private final OuxboxEventRepository outboxEventRepository;
+    private final OutboxEventRepository outboxEventRepository;
     private final EventPublisher eventPublisher;
     private final TransactionTemplate transactionTemplate;
 

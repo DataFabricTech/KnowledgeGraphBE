@@ -2,9 +2,10 @@ package com.tmax.datafabric.application.outbox;
 
 import com.tmax.datafabric.domain.event.AnalysisCompletedEvent;
 import com.tmax.datafabric.domain.event.AnalysisCreatedEvent;
+import com.tmax.datafabric.domain.event.AnalysisFailedEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEventConstant.AggregateType;
-import com.tmax.datafabric.domain.outbox.OuxboxEventRepository;
+import com.tmax.datafabric.domain.outbox.OutboxEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AnalysisEventToOutboxEventHandler {
 
-    private final OuxboxEventRepository ouxboxEventRepository;
+    private final OutboxEventRepository outboxEventRepository;
 
     @EventListener
     public void handle(AnalysisCreatedEvent analysisCreatedEvent) {
@@ -23,7 +24,7 @@ public class AnalysisEventToOutboxEventHandler {
             .payload(analysisCreatedEvent.getPayload())
             .build();
 
-        ouxboxEventRepository.save(outboxEvent);
+        outboxEventRepository.save(outboxEvent);
     }
 
     @EventListener
@@ -34,7 +35,17 @@ public class AnalysisEventToOutboxEventHandler {
             .payload(analysisCompletedEvent.getPayload())
             .build();
 
-        ouxboxEventRepository.save(outboxEvent);
+        outboxEventRepository.save(outboxEvent);
     }
 
+    @EventListener
+    public void handle(AnalysisFailedEvent analysisFailedEvent) {
+        OutboxEvent outboxEvent = OutboxEvent.builder()
+            .aggregateType(AggregateType.DATAFABRIC_ANALYSIS)
+            .eventType(AnalysisFailedEvent.class.getName())
+            .payload(analysisFailedEvent.getPayload())
+            .build();
+
+        outboxEventRepository.save(outboxEvent);
+    }
 }

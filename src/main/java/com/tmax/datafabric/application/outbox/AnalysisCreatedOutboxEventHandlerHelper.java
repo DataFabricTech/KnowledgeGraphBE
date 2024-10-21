@@ -34,9 +34,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AnalysisCreatedOutboxEventHandlerHelper implements
@@ -62,7 +64,8 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
         }
 
         createWorkflowFromAnalysisCreatedEvent(analysisCreatedEvent);
-
+        log.info("[WORKFLOW NOTIFICATION] Analysis (analysisId = {}) Created.",
+            analysisCreatedEvent.getAnalysisId());
     }
 
     private void createWorkflowFromAnalysisCreatedEvent(AnalysisCreatedEvent analysisCreatedEvent){

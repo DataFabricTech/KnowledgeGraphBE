@@ -1,14 +1,14 @@
 package com.tmax.datafabric.infrastructure.outbox;
 
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
-import com.tmax.datafabric.domain.outbox.OuxboxEventRepository;
+import com.tmax.datafabric.domain.outbox.OutboxEventRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class OuxboxEventRepositoryAdapter implements OuxboxEventRepository {
+public class OutboxEventRepositoryAdapter implements OutboxEventRepository {
 
     private final JpaOutboxEventRepository jpaOutboxEventRepository;
     private final JdbcOutboxEventRepository jdbcOutboxEventRepository;
