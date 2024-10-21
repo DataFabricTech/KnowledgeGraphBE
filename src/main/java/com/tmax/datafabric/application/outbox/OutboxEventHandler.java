@@ -2,7 +2,6 @@ package com.tmax.datafabric.application.outbox;
 
 import com.tmax.datafabric.domain.event.Event;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
-import com.tmax.datafabric.domain.outbox.OutboxEventHandlerHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;

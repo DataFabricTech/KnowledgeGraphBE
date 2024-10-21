@@ -2,7 +2,9 @@ package com.tmax.datafabric.application.outbox;
 
 import com.tmax.datafabric.application.config.DatafabricConst;
 import com.tmax.datafabric.application.config.ImageConfig;
+import com.tmax.datafabric.application.config.KubernetesLabelConst;
 import com.tmax.datafabric.kubernetesclient.config.KubernetesConfig;
+import com.tmax.datafabric.kubernetesclient.workflow.KubernetesWorkflowClient;
 import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.DagTask;
 import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.DagTemplate;
 import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.Template;
@@ -12,11 +14,11 @@ import com.tmax.datafabric.domain.event.Event;
 import com.tmax.datafabric.domain.event.AnalysisCreatedEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEventConstant.AggregateType;
-import com.tmax.datafabric.domain.outbox.OutboxEventHandlerHelper;
 import com.tmax.datafabric.domain.analysis.AnalysisRepository;
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.EnvVar;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimVolumeSource;
 import io.fabric8.kubernetes.api.model.Quantity;
@@ -37,11 +39,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AnalysisCreatedOutboxEventHandlerHelper implements OutboxEventHandlerHelper {
+public class AnalysisCreatedOutboxEventHandlerHelper implements
+    com.tmax.datafabric.application.outbox.OutboxEventHandlerHelper {
 
     private final AnalysisRepository analysisRepository;
     private final ImageConfig imageConfig;
-    private final KubernetesClient kubernetesClient;
+    private final KubernetesWorkflowClient workflowClient;
     private final KubernetesConfig kubernetesConfig;
 
     @Override
@@ -64,8 +67,6 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements OutboxEventHandl
 
     private void createWorkflowFromAnalysisCreatedEvent(AnalysisCreatedEvent analysisCreatedEvent){
         List<String> command = Arrays.asList("python3", "agent/main.py");
-
-        ObjectMetaBuilder objectMetaBuilder = new ObjectMetaBuilder();
         ContainerBuilder containerBuilder = new ContainerBuilder();
 
         Map<String, String> labels = Map.of(DatafabricConst.DATAFABRIC, DatafabricConst.ANALYSIS,
@@ -163,12 +164,15 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements OutboxEventHandl
         WorkflowSpec workflowSpec = WorkflowSpec.createWorkflowSpec(dagName, volumes,
             kubernetesConfig.getArgoServiceaccountName(), templates);
 
-        Workflow workflow = Workflow.createWorkflow(
-            objectMetaBuilder.withNamespace(kubernetesConfig.getNamespace())
-                .withName("analysis-"+ analysisCreatedEvent.getAnalysisId() + "-"
-                    + RandomStringUtils.randomAlphabetic(4).toLowerCase())
-                .withLabels(labels).build(), workflowSpec);
+        ObjectMetaBuilder objectMetaBuilder = new ObjectMetaBuilder();
 
-        kubernetesClient.resource(workflow).create();
+        ObjectMeta objectMeta = objectMetaBuilder.withNamespace(kubernetesConfig.getNamespace())
+            .withName(String.format("workflow-%s-%d", KubernetesLabelConst.ANALYSIS,
+                analysisCreatedEvent.getAnalysisId()))
+            .withLabels(labels).build();
+
+        Workflow workflow = Workflow.createWorkflow(objectMeta, workflowSpec);
+
+        workflowClient.createOrReplaceWorkflow(workflow);
     }
 }
