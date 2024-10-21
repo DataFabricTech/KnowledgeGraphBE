@@ -33,7 +33,7 @@ public class OutboxEventHandler {
         }
 
         if (!handled) {
-            String errorMsg = "Matched outbox event helper does not exist";
+            String errorMsg = "No Outbox Event Handler Helper Matched.";
             log.error(errorMsg);
         }
     }
@@ -45,7 +45,7 @@ public class OutboxEventHandler {
             Object object = objectMapper.readValue(outboxEvent.getPayload(), clazz);
             domainEvent = (Event) object;
         } catch (JsonProcessingException | ClassNotFoundException e) {
-            String errorMsg = "fail to convert outbox event to domain event";
+            String errorMsg = "Failed to Convert Outbox Event to Domain Event.";
             log.error(errorMsg, e);
         }
         return domainEvent;

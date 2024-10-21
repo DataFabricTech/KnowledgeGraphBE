@@ -40,7 +40,7 @@ public class OutboxScheduler {
                     outboxEventRepository.delete(outboxEvent);
                 });
             } catch (Exception e) {
-                log.error("Fail to handle outbox event (severe error)", e);
+                log.error("Failed to handle Outbox Event - (Severe Error)", e);
                 break;
             }
         }
