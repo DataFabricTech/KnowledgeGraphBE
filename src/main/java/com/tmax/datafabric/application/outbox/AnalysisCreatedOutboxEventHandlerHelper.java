@@ -72,8 +72,8 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
         List<String> command = Arrays.asList("python3", "agent/main.py");
         ContainerBuilder containerBuilder = new ContainerBuilder();
 
-        Map<String, String> labels = Map.of(DatafabricConst.DATAFABRIC, DatafabricConst.ANALYSIS,
-            DatafabricConst.ANALYSIS_ID, analysisCreatedEvent.getAnalysisId().toString());
+        Map<String, String> labels = new HashMap<>(KubernetesLabelConst.DEFAULT_ANALYSIS_LABELS);
+        labels.put(KubernetesLabelConst.ANALYSIS_ID_KEY, String.valueOf(analysisCreatedEvent.getAnalysisId()));
 
         List<Template> templates = new ArrayList<Template>();
 
