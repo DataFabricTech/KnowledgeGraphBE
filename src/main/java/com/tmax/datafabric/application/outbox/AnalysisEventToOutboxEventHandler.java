@@ -2,6 +2,7 @@ package com.tmax.datafabric.application.outbox;
 
 import com.tmax.datafabric.domain.event.AnalysisCompletedEvent;
 import com.tmax.datafabric.domain.event.AnalysisCreatedEvent;
+import com.tmax.datafabric.domain.event.AnalysisDeletedEvent;
 import com.tmax.datafabric.domain.event.AnalysisFailedEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEvent;
 import com.tmax.datafabric.domain.outbox.OutboxEventConstant.AggregateType;
@@ -47,5 +48,17 @@ public class AnalysisEventToOutboxEventHandler {
             .build();
 
         outboxEventRepository.save(outboxEvent);
+    }
+
+    @EventListener
+    public void handle(AnalysisDeletedEvent analysisDeletedEvent) {
+        OutboxEvent outboxEvent = OutboxEvent.builder()
+            .aggregateType(AggregateType.DATAFABRIC_ANALYSIS)
+            .eventType(AnalysisDeletedEvent.class.getName())
+            .payload(analysisDeletedEvent.getPayload())
+            .build();
+
+        outboxEventRepository.save(outboxEvent);
+
     }
 }
