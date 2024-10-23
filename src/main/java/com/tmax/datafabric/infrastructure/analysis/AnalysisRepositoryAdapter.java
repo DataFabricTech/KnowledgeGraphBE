@@ -21,4 +21,9 @@ public class AnalysisRepositoryAdapter implements AnalysisRepository {
     public Optional<Analysis> findById(Long id) {
         return jpaAnalysisRepository.findById(id);
     }
+
+    @Override
+    public void delete(Long id) {
+        jpaAnalysisRepository.deleteById(id);
+    }
 }
