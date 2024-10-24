@@ -4,6 +4,7 @@ import com.tmax.datafabric.application.analysis.port.GetAnalysisResultUseCase;
 import com.tmax.datafabric.application.analysis.port.GetAnalysisUseCase;
 import com.tmax.datafabric.application.analysis.port.dto.AnalysisData;
 import com.tmax.datafabric.application.analysis.port.dto.DataRelationData;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,11 @@ public class GetAnalysisController {
     @GetMapping("/{analysisId}")
     public AnalysisData getAnalysis(@PathVariable Long analysisId) {
         return getAnalysisUseCase.getAnalysis(analysisId);
+    }
+
+    @GetMapping("/all")
+    public List<AnalysisData> getAllAnalysis() {
+        return getAnalysisUseCase.getAllAnalysis();
     }
 
     @GetMapping("/{analysisId}/relation")
