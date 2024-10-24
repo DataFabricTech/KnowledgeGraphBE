@@ -4,6 +4,8 @@ import com.tmax.datafabric.application.analysis.port.GetAnalysisUseCase;
 import com.tmax.datafabric.application.analysis.port.dto.AnalysisData;
 import com.tmax.datafabric.domain.analysis.Analysis;
 import com.tmax.datafabric.domain.analysis.AnalysisRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +20,11 @@ public class GetAnalysisService implements GetAnalysisUseCase {
         Analysis analysis = analysisRepository.findById(analysisId).orElseThrow();
 
         return AnalysisData.from(analysis);
+    }
+
+    @Override
+    public List<AnalysisData> getAllAnalysis() {
+        return analysisRepository.findAll().stream().map(AnalysisData::from)
+            .collect(Collectors.toList());
     }
 }

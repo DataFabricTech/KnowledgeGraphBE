@@ -2,6 +2,7 @@ package com.tmax.datafabric.infrastructure.analysis;
 
 import com.tmax.datafabric.domain.analysis.Analysis;
 import com.tmax.datafabric.domain.analysis.AnalysisRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,9 @@ public class AnalysisRepositoryAdapter implements AnalysisRepository {
     public Optional<Analysis> findById(Long id) {
         return jpaAnalysisRepository.findById(id);
     }
+
+    @Override
+    public List<Analysis> findAll() { return jpaAnalysisRepository.findAll(); }
 
     @Override
     public void delete(Long id) {
