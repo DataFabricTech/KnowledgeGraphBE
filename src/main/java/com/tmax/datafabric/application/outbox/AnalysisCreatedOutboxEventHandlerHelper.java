@@ -47,6 +47,7 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
     private final AnalysisRepository analysisRepository;
     private final ImageConfig imageConfig;
     private final KubernetesWorkflowClient workflowClient;
+    private final KubernetesClient kubernetesClient;
     private final KubernetesConfig kubernetesConfig;
 
     @Override
@@ -74,8 +75,6 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
 
         Map<String, String> labels = new HashMap<>(KubernetesLabelConst.DEFAULT_ANALYSIS_LABELS);
         labels.put(KubernetesLabelConst.ANALYSIS_ID_KEY, String.valueOf(analysisCreatedEvent.getAnalysisId()));
-
-        List<Template> templates = new ArrayList<Template>();
 
         ResourceRequirements resourceRequirements = new ResourceRequirements();
         Map<String, Quantity> resource = new HashMap<>();
@@ -146,22 +145,16 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
         String solutionType = Optional.ofNullable(analysisCreatedEvent.getSolutionType())
             .orElse("default").toLowerCase();
 
-        Container container = containerBuilder.withName(solutionType)
+        Container container = containerBuilder.withName(DatafabricConst.ANALYSIS)
             .withArgs(args).withEnv(envs).withCommand(command)
             .withVolumeMounts(volumeMounts).withImage(imageConfig.getAnalysisImageName())
             .withResources(resourceRequirements)
             .build();
 
-        List<DagTask> tasks = new ArrayList<>();
-        Template template = Template.createTemplate(DatafabricConst.ANALYSIS, container);
-        templates.add(template);
+        List<Template> templates = new ArrayList<>();
 
-        DagTask dagTask = DagTask.createDagTask(DatafabricConst.ANALYSIS, DatafabricConst.ANALYSIS);
-        tasks.add(dagTask);
-
-        String dagName = "dag";
-        DagTemplate dag = DagTemplate.createDagTemplate(tasks);
-        Template dagTemplate = Template.createTemplate(dagName, dag);
+        String dagName = DatafabricConst.ANALYSIS;
+        Template dagTemplate = Template.createTemplate(DatafabricConst.ANALYSIS, container);
         templates.add(dagTemplate);
 
         WorkflowSpec workflowSpec = WorkflowSpec.createWorkflowSpec(dagName, volumes,
@@ -176,6 +169,6 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
 
         Workflow workflow = Workflow.createWorkflow(objectMeta, workflowSpec);
 
-        workflowClient.createOrReplaceWorkflow(workflow);
+        workflowClient.createWorkflow(workflow);
     }
 }
