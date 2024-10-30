@@ -12,8 +12,8 @@ public class KubernetesWorkflowClientAdapter implements KubernetesWorkflowClient
     private final KubernetesClient kubernetesClient;
 
     @Override
-    public Workflow createOrReplaceWorkflow(Workflow workflow) {
-        return kubernetesClient.resources(Workflow.class).resource(workflow).createOrReplace();
+    public Workflow createWorkflow(Workflow workflow) {
+        return kubernetesClient.resources(Workflow.class).resource(workflow).create();
     }
 
     @Override
