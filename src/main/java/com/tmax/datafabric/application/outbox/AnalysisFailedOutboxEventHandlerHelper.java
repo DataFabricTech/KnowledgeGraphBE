@@ -27,9 +27,9 @@ public class AnalysisFailedOutboxEventHandlerHelper implements OutboxEventHandle
 
     @Override
     public void handle(Event domainEvent) {
-        AnalysisCompletedEvent analysisCompletedEvent = (AnalysisCompletedEvent) domainEvent;
+        AnalysisFailedEvent analysisFailedEvent = (AnalysisFailedEvent) domainEvent;
 
-        Long analysisId = analysisCompletedEvent.getAnalysisId();
+        Long analysisId = analysisFailedEvent.getAnalysisId();
 
         deleteAnalysisWorkflow(analysisId);
 
