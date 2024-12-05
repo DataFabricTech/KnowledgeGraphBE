@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class GetAnalysisController {
     private final GetAnalysisUseCase getAnalysisUseCase;
-    private final GetAnalysisResultUseCase getAssocationAnalysisResultUseCase;
+    private final GetAnalysisResultUseCase getAnalysisResultUseCase;
 
     @GetMapping("/{analysisId}")
     public AnalysisData getAnalysis(@PathVariable Long analysisId) {
@@ -29,8 +29,8 @@ public class GetAnalysisController {
 
     @GetMapping("/{analysisId}/relation")
     public DataRelationData getRelationViaAssociationAnalysis(@PathVariable Long analysisId,
-        @RequestParam(name = "data-id") Long dataId) {
+        @RequestParam(name = "data-id") String dataId) {
         String modelType = "association";
-        return getAssocationAnalysisResultUseCase.getRelation(analysisId, dataId, modelType);
+        return getAnalysisResultUseCase.getRelation(analysisId, dataId, modelType);
     }
 }
