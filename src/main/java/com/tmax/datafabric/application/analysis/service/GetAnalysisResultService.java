@@ -26,13 +26,13 @@ public class GetAnalysisResultService implements GetAnalysisResultUseCase {
     private final KubernetesConfig kubernetesConfig;
 
     @Override
-    public DataRelationData getRelation(Long analysisId, Long dataId, String modelType) {
+    public DataRelationData getRelation(Long analysisId, String dataId, String modelType) {
 
 //        analysisRepository.findById(analysisId).orElseThrow(InvalidAnalysisIdException::new);
 
         List<DataRelationDto> result = new ArrayList<>();
 
-        String filePath = String.format("/pvc/mnt/analysis-%d/association_rule_result.csv",
+        String filePath = String.format("/pvc/mnt/analysis-%d/analysis_result.csv",
             analysisId);
 
         InputStream inputStream = kubernetesPodClient.downloadFileFromPod(filePath,
@@ -47,7 +47,7 @@ public class GetAnalysisResultService implements GetAnalysisResultUseCase {
 
             while ((line = reader.readLine()) != null) {
                 String[] relationRow = line.split(",");
-                if (Long.valueOf(relationRow[0]).equals(dataId)) {
+                if (relationRow[0].equals(dataId)) {
                     DataRelationDto dataRelationDto = DataRelationDto.builder()
                         .dataId(Long.valueOf(relationRow[1]))
                         .score(Double.valueOf(relationRow[2]))
