@@ -1,12 +1,11 @@
 package com.tmax.datafabric.application.outbox;
 
 import com.tmax.datafabric.application.config.DatafabricConst;
+import com.tmax.datafabric.application.config.DatasourceConfig;
 import com.tmax.datafabric.application.config.ImageConfig;
 import com.tmax.datafabric.application.config.KubernetesLabelConst;
 import com.tmax.datafabric.kubernetesclient.config.KubernetesConfig;
 import com.tmax.datafabric.kubernetesclient.workflow.KubernetesWorkflowClient;
-import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.DagTask;
-import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.DagTemplate;
 import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.Template;
 import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.Workflow;
 import com.tmax.datafabric.kubernetesclient.workflow.customresourcedefinition.WorkflowSpec;
@@ -25,17 +24,16 @@ import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.ResourceRequirements;
 import io.fabric8.kubernetes.api.model.Volume;
 import io.fabric8.kubernetes.api.model.VolumeMount;
-import io.fabric8.kubernetes.client.KubernetesClient;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -46,8 +44,8 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
 
     private final AnalysisRepository analysisRepository;
     private final ImageConfig imageConfig;
+    private final DatasourceConfig datasourceConfig;
     private final KubernetesWorkflowClient workflowClient;
-    private final KubernetesClient kubernetesClient;
     private final KubernetesConfig kubernetesConfig;
 
     @Override
@@ -69,7 +67,7 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
             analysisCreatedEvent.getAnalysisId());
     }
 
-    private void createWorkflowFromAnalysisCreatedEvent(AnalysisCreatedEvent analysisCreatedEvent){
+    private void createWorkflowFromAnalysisCreatedEvent(AnalysisCreatedEvent analysisCreatedEvent) {
         List<String> command = Arrays.asList("python3", "agent/main.py");
         ContainerBuilder containerBuilder = new ContainerBuilder();
 
@@ -96,6 +94,40 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
         args.add("--analysis_id");
         args.add(analysisCreatedEvent.getAnalysisId().toString());
 
+        String datasourceType = analysisCreatedEvent.getDataSourceType();
+
+        args.add("--datasource_type");
+        args.add(datasourceType);
+
+        if (datasourceType.equals("MinIO")) {
+            String connectionConfigPath
+                    = String.format("%s/%s-config.json", datasourceConfig.getPath(), datasourceType.toLowerCase());
+            String filePath = getClass().getClassLoader().getResource(connectionConfigPath).getPath();
+            File file = new File(filePath);
+            if (file.exists()) {
+                try {
+                    InputStream inputStream = new FileInputStream(filePath);
+                    String jsonString = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+                    JSONObject jsonObject = new JSONObject(jsonString);
+
+                    args.add("--host");
+                    args.add(jsonObject.get("host").toString());
+                    args.add("--port");
+                    args.add(jsonObject.get("port").toString());
+                    args.add("--region");
+                    args.add(jsonObject.get("region").toString());
+                    args.add("--bucket_name");
+                    args.add(jsonObject.get("bucketName").toString());
+                    args.add("--access_key");
+                    args.add(jsonObject.get("accessKey").toString());
+                    args.add("--secret_key");
+                    args.add(jsonObject.get("secretKey").toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         args.add("--mode");
 
         if (analysisCreatedEvent.getInputDataPath().isEmpty()) {
@@ -103,32 +135,16 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
         } else {
             args.add("production");
 
-            args.add("--input_data_path");
+            args.add("--file_source_path");
             args.add(analysisCreatedEvent.getInputDataPath());
         }
-
-        String analysisOutputCsvFilePath = DatafabricConst.DATAFABRIC_MOUNT_PATH + File.separator
-            + String.format("analysis-%d", analysisCreatedEvent.getAnalysisId()) + File.separator
-            + "association_rule_result.csv";
-
-        args.add("--output_data_path");
-        args.add(analysisOutputCsvFilePath);
 
         args.add("--algorithm");
         args.add(analysisCreatedEvent.getSolutionType().toLowerCase());
 
-        args.add("--model_option");
-        args.add(analysisCreatedEvent.getModelHyperparameters());
-        args.add("--fe_option");
-        args.add(analysisCreatedEvent.getFeatureHyperparameters());
-        args.add("--learning_option");
-        args.add(analysisCreatedEvent.getLearningHyperparameters());
-
-
         List<EnvVar> envs = new ArrayList<>();
         envs.add(new EnvVar("job_type", DatafabricConst.ANALYSIS, null));
         envs.add(new EnvVar("analysis_id", analysisCreatedEvent.getAnalysisId().toString(), null));
-
 
         List<Volume> volumes = new ArrayList<>();
         Volume volume = new Volume();
@@ -141,9 +157,6 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
         VolumeMount volumeMounts = new VolumeMount();
         volumeMounts.setName(kubernetesConfig.getPvcName());
         volumeMounts.setMountPath(kubernetesConfig.getMountPath());
-
-        String solutionType = Optional.ofNullable(analysisCreatedEvent.getSolutionType())
-            .orElse("default").toLowerCase();
 
         Container container = containerBuilder.withName(DatafabricConst.ANALYSIS)
             .withArgs(args).withEnv(envs).withCommand(command)
