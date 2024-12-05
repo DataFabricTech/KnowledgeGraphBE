@@ -9,35 +9,27 @@ import lombok.NoArgsConstructor;
 public class AnalysisCreatedEvent extends Event {
 
     private Long analysisId;
+    private String dataSourceType;
     private String inputDataPath;
     private String solutionType;
     private String imageName;
-    private String modelHyperparameters;
-    private String featureHyperparameters;
-    private String learningHyperparameters;
     private String cpuSize;
     private String memorySize;
 
-    protected AnalysisCreatedEvent(Long analysisId, String inputDataPath, String solutionType,
-        String imageName, String modelHyperparameters, String featureHyperparameters,
-        String learningHyperparameters, String cpuSize, String memorySize) {
+    protected AnalysisCreatedEvent(Long analysisId, String datasourceType, String inputDataPath, String solutionType,
+                                  String imageName, String cpuSize, String memorySize) {
         this.analysisId = analysisId;
+        this.dataSourceType = datasourceType;
         this.inputDataPath = inputDataPath;
         this.solutionType = solutionType;
         this.imageName = imageName;
-        this.modelHyperparameters = modelHyperparameters;
-        this.featureHyperparameters = featureHyperparameters;
-        this.learningHyperparameters = learningHyperparameters;
         this.cpuSize = cpuSize;
         this.memorySize = memorySize;
     }
 
-    public static AnalysisCreatedEvent create(Long analysisId, String inputDataPath,
-        String solutionType,  String imageName, String modelHyperparameters,
-        String featureHyperparameters, String learningHyperparameters, String cpuSize,
-        String memorySize) {
-        return new AnalysisCreatedEvent(analysisId, inputDataPath, solutionType, imageName,
-            modelHyperparameters, featureHyperparameters, learningHyperparameters, cpuSize,
+    public static AnalysisCreatedEvent create(Long analysisId, String datasourceType, String inputDataPath,
+        String solutionType,  String imageName, String cpuSize, String memorySize) {
+        return new AnalysisCreatedEvent(analysisId, datasourceType, inputDataPath, solutionType, imageName, cpuSize,
             memorySize);
     }
 }

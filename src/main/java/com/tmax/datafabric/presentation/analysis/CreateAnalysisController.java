@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CreateAnalysisController {
     private final CreateAnalysisUseCase createAnalysisUseCase;
 
-    // TODO: input command(AnalysisCommand), return type (AnalysisData) 만들기
     @PostMapping("")
     public AnalysisData createAssociationAnalysis(@RequestBody CreateAnalysisCommand command) {
         return createAnalysisUseCase.create(command);

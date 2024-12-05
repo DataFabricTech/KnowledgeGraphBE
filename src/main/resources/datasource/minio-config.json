@@ -1,0 +1,8 @@
+m{
+  "host": "host.minikube.internal",
+  "port": "9000",
+  "region": "",
+  "bucketName": "mybucket",
+  "accessKey": "minioadmin",
+  "secretKey": "minioadmin"
+}
