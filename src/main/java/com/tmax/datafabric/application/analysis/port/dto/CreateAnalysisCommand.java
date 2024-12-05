@@ -14,32 +14,33 @@ import lombok.ToString;
 @ToString
 public class CreateAnalysisCommand {
     private String name;
+    private String datasourceType;
     private String inputDataPath;
     private String solutionType;
     private String creator;
-    private HyperparameterDto hyperparameterDto;
+//    private HyperparameterDto hyperparameterDto;
     private ResourceSpecDto resourceSpecDto;
 
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class HyperparameterDto {
-
-        private String modelHyperparameters;
-        private String featureHyperparameters;
-        private String learningHyperparameters;
-
-        public static HyperParameter to(HyperparameterDto hyperparameterDto) {
-            return new HyperParameter(hyperparameterDto.getModelHyperparameters(),
-                hyperparameterDto.getFeatureHyperparameters(),
-                hyperparameterDto.getLearningHyperparameters());
-        }
-
-        public static HyperparameterDto from(HyperParameter hyperparameter) {
-            return new HyperparameterDto(hyperparameter.getModelHyperparameters(),
-                hyperparameter.getFeatureHyperparameters(), hyperparameter.getLearningHyperparameters());
-        }
-    }
+//    @Getter
+//    @AllArgsConstructor
+//    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+//    public static class HyperparameterDto {
+//
+//        private String modelHyperparameters;
+//        private String featureHyperparameters;
+//        private String learningHyperparameters;
+//
+//        public static HyperParameter to(HyperparameterDto hyperparameterDto) {
+//            return new HyperParameter(hyperparameterDto.getModelHyperparameters(),
+//                hyperparameterDto.getFeatureHyperparameters(),
+//                hyperparameterDto.getLearningHyperparameters());
+//        }
+//
+//        public static HyperparameterDto from(HyperParameter hyperparameter) {
+//            return new HyperparameterDto(hyperparameter.getModelHyperparameters(),
+//                hyperparameter.getFeatureHyperparameters(), hyperparameter.getLearningHyperparameters());
+//        }
+//    }
 
     @Getter
     @AllArgsConstructor

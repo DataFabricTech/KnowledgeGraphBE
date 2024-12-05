@@ -13,19 +13,13 @@
       <column name="name" type="varchar(255)">
         <constraints nullable="false"/>
       </column>
+      <column name="datasource_type" type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
       <column name="input_data_path" type="text">
         <constraints nullable="false"/>
       </column>
       <column name="solution_type" type="varchar(50)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="model_hyperparameters" type="text">
-        <constraints nullable="false"/>
-      </column>
-      <column name="feature_hyperparameters" type="text">
-        <constraints nullable="false"/>
-      </column>
-      <column name="learning_hyperparameters" type="text">
         <constraints nullable="false"/>
       </column>
       <column name="creator" type="varchar(255)">

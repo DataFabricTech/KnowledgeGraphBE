@@ -28,12 +28,9 @@ public class Analysis {
     private Long id;
 
     private String name;
+    private String datasourceType;
     private String inputDataPath;
     private String solutionType;
-
-    @Embedded
-    private HyperParameter hyperparameter;
-
     private String creator;
 
     @CreatedDate
@@ -45,20 +42,20 @@ public class Analysis {
     @Embedded
     private ResourceSpec resourceSpec;
 
-    protected Analysis(String name, String inputDataPath, String solutionType,
-        HyperParameter hyperparameter, ResourceSpec resourceSpec, String creator) {
+    protected Analysis(String name, String datasourceType, String inputDataPath,
+                       String solutionType, ResourceSpec resourceSpec, String creator) {
         this.name = name;
+        this.datasourceType = datasourceType;
         this.inputDataPath = inputDataPath;
         this.solutionType = solutionType;
-        this.hyperparameter = hyperparameter;
         this.resourceSpec = resourceSpec;
         this.creator = creator;
         this.status = AnalysisStatus.READY;
     }
 
-    public static Analysis createAnalysis(String name, String inputDataPath,String solutionType,
-        HyperParameter hyperparameter, ResourceSpec resourceSpec, String creator) {
-        return new Analysis(name, inputDataPath, solutionType, hyperparameter, resourceSpec, creator);
+    public static Analysis createAnalysis(String name, String datasourceType, String inputDataPath, String solutionType,
+                                          ResourceSpec resourceSpec, String creator) {
+        return new Analysis(name, datasourceType, inputDataPath, solutionType, resourceSpec, creator);
     }
 
     public void running() {
