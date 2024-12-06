@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataRelationDto {
-    private Long dataId;
+    private String dataId;
     private Double score;
 
     @Builder
-    public DataRelationDto(Long dataId, Double score) {
+    public DataRelationDto(String dataId, Double score) {
         this.dataId = dataId;
         this.score = score;
     }

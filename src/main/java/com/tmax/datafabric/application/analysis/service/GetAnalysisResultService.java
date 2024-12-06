@@ -28,7 +28,7 @@ public class GetAnalysisResultService implements GetAnalysisResultUseCase {
     @Override
     public DataRelationData getRelation(Long analysisId, String dataId, String modelType) {
 
-//        analysisRepository.findById(analysisId).orElseThrow(InvalidAnalysisIdException::new);
+        analysisRepository.findById(analysisId).orElseThrow(InvalidAnalysisIdException::new);
 
         List<DataRelationDto> result = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class GetAnalysisResultService implements GetAnalysisResultUseCase {
                 String[] relationRow = line.split(",");
                 if (relationRow[0].equals(dataId)) {
                     DataRelationDto dataRelationDto = DataRelationDto.builder()
-                        .dataId(Long.valueOf(relationRow[1]))
+                        .dataId(relationRow[1])
                         .score(Double.valueOf(relationRow[2]))
                         .build();
                     result.add(dataRelationDto);
