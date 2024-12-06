@@ -1,26 +1,21 @@
 package com.tmax.datafabric.application.exception;
 
-public class InvalidAnalysisIdException extends RuntimeException implements DataFabricException {
-
-    private static final int ERROR_CODE = 400;
-
-    private static final String DEFAULT_MESSAGE = "Invalid Analysis Id Requested.";
+public class InvalidAnalysisIdException extends DataFabricException {
+    public static final ErrorCode errorCode = ErrorCode.INVALID_ANALYSIS_ID;
 
     public InvalidAnalysisIdException() {
-        super(DEFAULT_MESSAGE);
+        super(errorCode);
     }
 
     public InvalidAnalysisIdException(String message) {
-        super(message);
+        super(message, errorCode);
     }
 
-    @Override
-    public int getErrorCode() {
-        return ERROR_CODE;
+    public InvalidAnalysisIdException(ErrorCode errorCode, String message) {
+        super(message, errorCode);
     }
 
-    @Override
-    public synchronized Throwable fillInStackTrace() {
-        return this;
+    public InvalidAnalysisIdException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

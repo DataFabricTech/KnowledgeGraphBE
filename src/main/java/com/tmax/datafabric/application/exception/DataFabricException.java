@@ -1,8 +1,24 @@
 package com.tmax.datafabric.application.exception;
 
-public interface DataFabricException {
+public class DataFabricException extends RuntimeException {
+    private ErrorCode errorCode;
 
-    int getErrorCode();
+    public DataFabricException(String message, ErrorCode errorCode) {
+        super(message);
+        this.errorCode = errorCode;
+    }
 
-    String getMessage();
+    public DataFabricException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+    }
+
+
+    public ErrorCode getErrorCode() {
+        return this.errorCode;
+    };
+
+    public String getMessage() {
+        return this.errorCode.getMessage();
+    };
 }

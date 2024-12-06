@@ -1,26 +1,21 @@
 package com.tmax.datafabric.application.exception;
 
-public class InvalidDataObjectIdException extends RuntimeException implements DataFabricException {
-
-    private static final int ERROR_CODE = 400;
-
-    private static final String DEFAULT_MESSAGE = "DataObject Id Cannot Found.";
+public class InvalidDataObjectIdException extends DataFabricException {
+    public static final ErrorCode errorCode = ErrorCode.INVALID_DATAOBJECT_ID;
 
     public InvalidDataObjectIdException() {
-        super(DEFAULT_MESSAGE);
+        super(errorCode);
     }
 
     public InvalidDataObjectIdException(String message) {
-        super(message);
+        super(message, errorCode);
     }
 
-    @Override
-    public int getErrorCode() {
-        return ERROR_CODE;
+    public InvalidDataObjectIdException(ErrorCode errorCode, String message) {
+        super(message, errorCode);
     }
 
-    @Override
-    public synchronized Throwable fillInStackTrace() {
-        return this;
+    public InvalidDataObjectIdException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
