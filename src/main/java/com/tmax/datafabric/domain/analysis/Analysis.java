@@ -29,7 +29,9 @@ public class Analysis {
 
     private String name;
     private String datasourceType;
+    private String integrationHistory;
     private String inputDataPath;
+    private String metaDataDirectory;
     private String solutionType;
     private String creator;
 
@@ -42,20 +44,24 @@ public class Analysis {
     @Embedded
     private ResourceSpec resourceSpec;
 
-    protected Analysis(String name, String datasourceType, String inputDataPath,
-                       String solutionType, ResourceSpec resourceSpec, String creator) {
+    protected Analysis(String name, String datasourceType, String integrationHistory, String inputDataPath,
+                       String metaDataDirectory, String solutionType, ResourceSpec resourceSpec, String creator) {
         this.name = name;
         this.datasourceType = datasourceType;
+        this.integrationHistory = integrationHistory;
         this.inputDataPath = inputDataPath;
+        this.metaDataDirectory = metaDataDirectory;
         this.solutionType = solutionType;
         this.resourceSpec = resourceSpec;
         this.creator = creator;
         this.status = AnalysisStatus.READY;
     }
 
-    public static Analysis createAnalysis(String name, String datasourceType, String inputDataPath, String solutionType,
+    public static Analysis createAnalysis(String name, String datasourceType, String integrationHistory,
+                                          String inputDataPath, String metaDataDirectory, String solutionType,
                                           ResourceSpec resourceSpec, String creator) {
-        return new Analysis(name, datasourceType, inputDataPath, solutionType, resourceSpec, creator);
+        return new Analysis(name, datasourceType, integrationHistory, inputDataPath, metaDataDirectory, solutionType,
+                resourceSpec, creator);
     }
 
     public void running() {

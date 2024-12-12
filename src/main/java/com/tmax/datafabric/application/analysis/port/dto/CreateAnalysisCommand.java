@@ -15,7 +15,9 @@ import lombok.ToString;
 public class CreateAnalysisCommand {
     private String name;
     private String datasourceType;
+    private String integrationHistory;
     private String inputDataPath;
+    private String metaDataDirectory;
     private String solutionType;
     private String creator;
 //    private HyperparameterDto hyperparameterDto;

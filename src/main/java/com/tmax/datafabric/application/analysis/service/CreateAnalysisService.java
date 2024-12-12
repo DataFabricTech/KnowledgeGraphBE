@@ -29,14 +29,15 @@ public class CreateAnalysisService implements CreateAnalysisUseCase {
 
         String datasourceType = Optional.ofNullable(command.getDatasourceType()).orElse("MinIO");
 
-        Analysis analysis = Analysis.createAnalysis(command.getName(), datasourceType, command.getInputDataPath(),
-                command.getSolutionType(), resourceSpec, command.getCreator());
+        Analysis analysis = Analysis.createAnalysis(command.getName(), datasourceType, command.getIntegrationHistory(),
+                command.getInputDataPath(), command.getMetaDataDirectory(), command.getSolutionType(), resourceSpec,
+                command.getCreator());
 
         Analysis savedAnalysis = analysisRepository.save(analysis);
 
         //2. AnalysisCreatedEvent 발행
         eventPublisher.publish(AnalysisCreatedEvent.create(savedAnalysis.getId(), savedAnalysis.getDatasourceType(),
-            savedAnalysis.getInputDataPath(), savedAnalysis.getSolutionType(),
+            savedAnalysis.getInputDataPath(), savedAnalysis.getMetaDataDirectory(), savedAnalysis.getSolutionType(),
             imageConfig.getAnalysisImageName(), resourceSpec.getCpuSize(), resourceSpec.getMemorySize()));
 
         return AnalysisData.from(savedAnalysis);

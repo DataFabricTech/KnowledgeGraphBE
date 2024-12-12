@@ -11,16 +11,18 @@ public class AnalysisCreatedEvent extends Event {
     private Long analysisId;
     private String dataSourceType;
     private String inputDataPath;
+    private String metaDataDirectory;
     private String solutionType;
     private String imageName;
     private String cpuSize;
     private String memorySize;
 
-    protected AnalysisCreatedEvent(Long analysisId, String datasourceType, String inputDataPath, String solutionType,
-                                  String imageName, String cpuSize, String memorySize) {
+    protected AnalysisCreatedEvent(Long analysisId, String datasourceType, String inputDataPath, String metaDataDirectory,
+                                   String solutionType, String imageName, String cpuSize, String memorySize) {
         this.analysisId = analysisId;
         this.dataSourceType = datasourceType;
         this.inputDataPath = inputDataPath;
+        this.metaDataDirectory = metaDataDirectory;
         this.solutionType = solutionType;
         this.imageName = imageName;
         this.cpuSize = cpuSize;
@@ -28,8 +30,8 @@ public class AnalysisCreatedEvent extends Event {
     }
 
     public static AnalysisCreatedEvent create(Long analysisId, String datasourceType, String inputDataPath,
-        String solutionType,  String imageName, String cpuSize, String memorySize) {
-        return new AnalysisCreatedEvent(analysisId, datasourceType, inputDataPath, solutionType, imageName, cpuSize,
-            memorySize);
+        String metaDataDirectory, String solutionType, String imageName, String cpuSize, String memorySize) {
+        return new AnalysisCreatedEvent(analysisId, datasourceType, inputDataPath, metaDataDirectory, solutionType,
+                imageName, cpuSize, memorySize);
     }
 }
