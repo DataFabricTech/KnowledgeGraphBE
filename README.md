@@ -5,7 +5,7 @@ Data Fabric Platform(KnowledgeGraph Backend)
 ---
 
 ### 스펙
-+ JAVA 11
++ JAVA 17
 + Spring Boot 2.7.16
 + Packaging : Jar
 
