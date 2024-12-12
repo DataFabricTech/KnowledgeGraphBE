@@ -137,6 +137,9 @@ public class AnalysisCreatedOutboxEventHandlerHelper implements
 
             args.add("--file_source_path");
             args.add(analysisCreatedEvent.getInputDataPath());
+
+            args.add("--meta_data_directory");
+            args.add(analysisCreatedEvent.getMetaDataDirectory());
         }
 
         args.add("--algorithm");

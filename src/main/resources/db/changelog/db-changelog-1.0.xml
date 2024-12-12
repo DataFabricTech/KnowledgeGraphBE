@@ -16,7 +16,13 @@
       <column name="datasource_type" type="varchar(50)">
         <constraints nullable="false"/>
       </column>
+      <column name="integration_history" type="text">
+        <constraints nullable="false"/>
+      </column>
       <column name="input_data_path" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="meta_data_directory" type="text">
         <constraints nullable="false"/>
       </column>
       <column name="solution_type" type="varchar(50)">
